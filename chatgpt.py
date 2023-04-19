@@ -1,13 +1,17 @@
 # Import necessary libraries
 import openai
 import speech_recognition as sr
-import pyttsx3
+import AppKit
 
 # Assign OpenAI API key
-openai.api_key = "YOUR OPENAI KEY"
+openai.api_key = "YOUR API KEY"
 
 # Initialize text-to-speech engine
-engine = pyttsx3.init()
+engine = AppKit.NSSpeechSynthesizer.alloc().init()
+voice = AppKit.NSSpeechSynthesizer.defaultVoice()
+engine.setVoice_(voice)
+
+
 
 # Loop to listen for audio input
 while True:
@@ -37,14 +41,23 @@ while True:
         print(response_text)
 
         # Speak the response
-        engine.say(response_text)
-        engine.runAndWait()
+        engine.startSpeakingString_(response_text)
+        while engine.isSpeaking():
+            AppKit.NSRunLoop.currentRunLoop().runMode_beforeDate_(
+                AppKit.NSDefaultRunLoopMode, AppKit.NSDate.distantFuture()
+            )
         print()
 
     # Catch if recognition fails
     except:
         response_text = "Sorry, I didn't get that!"
         print(response_text)
-        engine.say(response_text)
-        engine.runAndWait()
+        engine.startSpeakingString_(response_text)
+        while engine.isSpeaking():
+            AppKit.NSRunLoop.currentRunLoop().runMode_beforeDate_(
+                AppKit.NSDefaultRunLoopMode, AppKit.NSDate.distantFuture()
+            )
         print()
+
+
+
